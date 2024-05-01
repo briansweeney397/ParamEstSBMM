@@ -1,4 +1,4 @@
-# IterativeParamSelection
+# ParamEstSBMM
 
 This repo is a collection of the MATLAB codes for the paper "Parameter Selection by GCV and a χ2 test within Iterative Methods for ℓ1-regularized Inverse Problems" 
 by Brian Sweeney, Rosemary Renaut, and Malena Espanol in order to provide reproducibility information for the paper.
