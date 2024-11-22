@@ -43,6 +43,10 @@ elseif strncmp(method,'cchi',4)
     sel = 2;
 elseif strncmp(method,'ncchi',5)
     sel = 3;
+elseif strncmp(method,'dp',2)
+    sel = 4;
+elseif strncmp(method,'rwp',2)
+    sel = 5;
 else
     sel = 1;
 end
@@ -88,13 +92,33 @@ if lamcut == 0
     elseif sel==2
         xo = pdeL1.*DG1(:) + pdeL2.*DG2(:);
         xo = real(ifft2(reshape(xo,sqrt(n),sqrt(n))));
-        LG(i,1) = ChiSqx0_FFT(eA,b,xo,eL1,eL2,za);
+        if i>1
+        lamg = LG(i-1,1);
+        else
+        lamg = 25;
+        end
+        LG(i,1) = ChiSqx0_FFT(eA,b,xo,eL1,eL2,za,lamg);
     elseif sel ==3
         xo = pdeL1.*DG1(:) + pdeL2.*DG2(:);
         xo = real(ifft2(reshape(xo,sqrt(n),sqrt(n))));
         xbar = reshape(x,sqrt(n),sqrt(n));
-        [lg,~] = ChiSqx0_noncentral_FFT(eA,b,xo,xbar,eL1,eL2,za);
+        if i>1
+        lamg = LG(i-1,1);
+        else
+        lamg = 25;
+        end
+        [lg,~] = ChiSqx0_noncentral_FFT(eA,b,xo,xbar,eL1,eL2,za,lamg);
         LG(i,1) = lg;
+    elseif sel ==4
+        ta = 1.01; dptol = 10; %dptol = 0.1;
+        if i>1
+        lamg = LG(i-1,1);
+        else
+        lamg = 25;
+        end
+        LG(i,1) = DP_FFT(eA,b,wreg(1:p/2),wreg(p/2+1:end),eL1,eL2,ta,dptol,lamg);
+    elseif sel ==5
+        LG(i,1) = RWP_FFT(eA,b,wreg(1:p/2),wreg(p/2+1:end),eL1,eL2);
     end
 else
     LG(i,1) = LG(i-1,1);

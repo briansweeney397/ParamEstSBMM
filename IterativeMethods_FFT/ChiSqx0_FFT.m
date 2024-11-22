@@ -1,4 +1,4 @@
-function lambda = ChiSqx0_FFT(eA,b,x0,eL1,eL2,za)
+function lambda = ChiSqx0_FFT(eA,b,x0,eL1,eL2,za,lamg)
 % Use the central Chi^2 test to select lambda using the FFT
 %
 % eA: Eigenvalues of A
@@ -12,7 +12,7 @@ function lambda = ChiSqx0_FFT(eA,b,x0,eL1,eL2,za)
 
 m = length(eA);
 n =m;
-lambda = 1;
+lambda = lamg;
 Delta = abs(eL1).^2 + abs(eL2).^2;
 x0i = (1/sqrt(n))*fft2(x0);
 B = (1/sqrt(n))*fft2(reshape(b,sqrt(n),sqrt(n)));
@@ -28,11 +28,26 @@ eA = eA(Delta ~= 0);
 
 f = lambda^2*sum((Delta.*s2)./(abs(eA).^2+(lambda^2).*(Delta)))-mt;
 iter = 0; 
-while abs(f) > sqrt(2*(mt))*za && iter < 2500
+while abs(f) > sqrt(2*(mt))*za && iter < 7000
 fp = 2*lambda*sum((abs(eA).^2.*Delta.*s2)./(abs(eA).^2+(lambda^2).*(Delta)));
 lambda = lambda-f/fp;
 f = lambda^2*sum((Delta.*s2)./(abs(eA).^2+(lambda^2).*(Delta)))-mt;
 iter = iter + 1;
+end
+% 
+% if abs(f) > 100 || abs(lambda) >1e4
+%     lambda = 1;
+% f = lambda^2*sum((Delta.*s2)./(abs(eA).^2+(lambda^2).*(Delta)))-mt;
+%     iter = 0; 
+% while abs(f) > sqrt(2*(mt))*za && iter < 50
+%     fp = 2*lambda*sum((abs(eA).^2.*Delta.*s2)./(abs(eA).^2+(lambda^2).*(Delta)));
+%     lambda = lambda-f/fp;
+%     f = lambda^2*sum((Delta.*s2)./(abs(eA).^2+(lambda^2).*(Delta)))-mt;
+%     iter = iter + 1;
+% end
+% end
+if abs(lambda) > 1e4 % If no root, pick lambda_max
+    lambda = 1e4;
 end
 
 % if iter ==100
