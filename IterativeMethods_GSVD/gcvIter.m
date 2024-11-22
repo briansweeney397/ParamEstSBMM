@@ -44,8 +44,8 @@ npoints = 200;                      % Number of points on the curve.
 smin_ratio = 16*eps;                % Smallest regularization parameter.
 
 % Initialization.
-[m,n] = size(U); [p,ps] = size(s);
-beta = U'*b; beta2 = norm(b)^2 - norm(beta)^2;
+[m,n] = size(U); [p,ps] = size(s); 
+beta = U'*b; %beta2 = sum(beta(n+1:m).^2);
 hhat = V'*h;
 if (ps==2)
   s = s(p:-1:1,1)./s(p:-1:1,2); beta = beta(p:-1:1); hhat = hhat(p:-1:1);
@@ -58,17 +58,17 @@ end
   for i=npoints-1:-1:1, reg_param(i) = ratio*reg_param(i+1); end
 
   % Intrinsic residual.
-  delta0 = 0;
-  if (m > n & beta2 > 0), delta0 = beta2; end
+  %delta0 = 0;
+  %if (m > n & beta2 > 0), delta0 = beta2; end
 
   % Vector of GCV-function values.
   for i=1:npoints
-    G(i) = gcvfunIter(reg_param(i),s2,beta(1:p), hhat,delta0,m-n);
+    G(i) = gcvfunIter(reg_param(i),s2,beta(1:p), hhat,m-n);
   end 
 
   % Find minimum, if requested.
     [~,minGi] = min(G); % Initial guess.
     reg_min = fminbnd('gcvfunIter',...
       reg_param(min(minGi+1,npoints)),reg_param(max(minGi-1,1)),...
-      optimset('Display','off'),s2,beta(1:p),hhat,delta0,m-n); % Minimizer.
+      optimset('Display','off'),s2,beta(1:p),hhat,m-n); % Minimizer.
 end

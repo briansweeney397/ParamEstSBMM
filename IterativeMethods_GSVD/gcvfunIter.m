@@ -1,4 +1,4 @@
-function G = gcvfunIter(lambda,s2,beta,hhat,delta0,mn)
+function G = gcvfunIter(lambda,s2,beta,hhat,mn)
 % Adapted from gcvfun in regularization tools by
 % Per Christian Hansen which has the following license:
 %
@@ -34,4 +34,4 @@ function G = gcvfunIter(lambda,s2,beta,hhat,delta0,mn)
    f = (lambda^2)./(s2 + lambda^2);
    f2 = (lambda^2*sqrt(s2))./(s2 + lambda^2);
 
-G = (norm(-f.*beta+f2.*hhat)^2 + delta0)/(mn + sum(f))^2;
+G = (norm(-f.*beta+f2.*hhat)^2)/(mn + sum(f))^2;

@@ -1,4 +1,4 @@
-function [lambda,tolB] = ChiSqx0_noncentral(A,U,b,x0,xbar,ups,M,za)
+function [lambda,tolB] = ChiSqx0_noncentral(A,U,b,x0,xbar,ups,M,za,lamg)
 % Use the non-central Chi^2 test to select lambda using the GSVD
 %
 % A: Forward matrix
@@ -16,7 +16,7 @@ function [lambda,tolB] = ChiSqx0_noncentral(A,U,b,x0,xbar,ups,M,za)
 m = size(A,1);
 n = size(A,2);
 p = length(M);
-lambda = 1000;
+lambda = lamg;
 gamma = ups(1:p)./M;
 
 r = b-A*x0;
@@ -48,32 +48,56 @@ end
 
 tolB = tolB(1:iter);
 
-% If no root, search for minimum derivative
-if iter ==50 || lambda >1e30
-    lambdaMin = ChiSqx0(A,U,b,x0,ups,M,za);
-    lambdaMax = 1e5;
-    zt1min= z./((gamma.^2+lambdaMin^2));
-    zt2min= zt1min./((gamma.^2+lambdaMin^2));
-    fmin = 2*lambdaMin*sum(zt2min.*gamma.^2);
-    lambdaMid = (lambdaMax+lambdaMin)/2;
-    zt1= z./((gamma.^2+lambdaMid^2));
-    zt2= zt1./((gamma.^2+lambdaMid^2));
-    fp = 2*lambdaMid*sum(zt2.*gamma.^2);
-    iter=1;
-    nc = lambda^2*sum((q.^2)./((gamma.^2+lambdaMid^2)));
-    while abs(fp) > sqrt(2*(m-n+p+2*nc))*za && iter < 100
-    if sign(fp) == sign(fmin)
-        lambdaMin = lambdaMid;
-        fmin = fp;
-    else
-        lambdaMax = lambdaMid;
-    end
-    lambdaMid = (lambdaMax+lambdaMin)/2;
-    zt1= z./((gamma.^2+lambdaMid^2));
-    zt2= zt1./((gamma.^2+lambdaMid^2));
-    fp = 2*lambdaMid*sum(zt2.*gamma.^2);
-    iter=iter+1;
-    end
-    lambda = lambdaMid;
+% If no root, search for minimum derivative 
+% if abs(f) > 100 || abs(lambda) >1e4
+%     lambda = 1;
+%     %nc = lambda^2*sum((q.^2)./((gamma.^2+lambda^2)));
+%     zt1= z./((gamma.^2+lambda^2));
+% zt2= zt1./((gamma.^2+lambda^2));
+% f = 2*lambda*sum(zt2.*gamma.^2);
+% fp = 2*sum(zt2.*gamma.^2.*(1-(4*lambda^2)./(gamma.^2+lambda^2)));
+%     iter = 0; 
+% while abs(fp) > 10 && iter < 50
+%     fp = 2*sum(zt2.*gamma.^2.*(1-(4*lambda^2)./(gamma.^2+lambda^2)));
+%     lambda = lambda-f/fp;
+%     zt1= z./((gamma.^2+lambda^2));
+%     zt2= zt1./((gamma.^2+lambda^2));
+%     f = 2*lambda*sum(zt2.*gamma.^2);
+%     %nc = lambda^2*sum((q.^2)./((gamma.^2+lambda^2)));
+%     iter = iter + 1;
+% end
+% end
+if lambda > 1e4 % If no root, pick lambda_max
+    lambda = 1e4;
 end
+lambda = abs(lambda);
+
+% % If no root, search for minimum derivative
+% if iter ==50 || abs(lambda) >1e30
+%     lambdaMin = ChiSqx0(A,U,b,x0,ups,M,za,lamg);
+%     lambdaMax = 1e5;
+%     zt1min= z./((gamma.^2+lambdaMin^2));
+%     zt2min= zt1min./((gamma.^2+lambdaMin^2));
+%     fmin = 2*lambdaMin*sum(zt2min.*gamma.^2);
+%     lambdaMid = (lambdaMax+lambdaMin)/2;
+%     zt1= z./((gamma.^2+lambdaMid^2));
+%     zt2= zt1./((gamma.^2+lambdaMid^2));
+%     fp = 2*lambdaMid*sum(zt2.*gamma.^2);
+%     iter=1;
+%     nc = lambda^2*sum((q.^2)./((gamma.^2+lambdaMid^2)));
+%     while abs(fp) > sqrt(2*(m-n+p+2*nc))*za && iter < 100
+%     if sign(fp) == sign(fmin)
+%         lambdaMin = lambdaMid;
+%         fmin = fp;
+%     else
+%         lambdaMax = lambdaMid;
+%     end
+%     lambdaMid = (lambdaMax+lambdaMin)/2;
+%     zt1= z./((gamma.^2+lambdaMid^2));
+%     zt2= zt1./((gamma.^2+lambdaMid^2));
+%     fp = 2*lambdaMid*sum(zt2.*gamma.^2);
+%     iter=iter+1;
+%     end
+%     lambda = lambdaMid;
+% end
 lambda = abs(lambda);

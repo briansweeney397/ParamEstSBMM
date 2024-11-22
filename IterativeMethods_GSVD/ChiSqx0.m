@@ -1,4 +1,4 @@
-function lambda = ChiSqx0(A,U,b,x0,ups,M,za)
+function lambda = ChiSqx0(A,U,b,x0,ups,M,za,lamg)
 % Use the central Chi^2 test to select lambda using the GSVD
 %
 % A: Forward matrix
@@ -14,7 +14,7 @@ function lambda = ChiSqx0(A,U,b,x0,ups,M,za)
 m = size(A,1);
 n = size(A,2);
 p = length(M);
-lambda = 1;
+lambda = lamg;
 gamma = ups(1:p)./M;
 
 r = b-A*x0;

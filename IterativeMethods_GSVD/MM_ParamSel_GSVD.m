@@ -45,10 +45,12 @@ elseif strncmp(method,'cchi',4)
     sel = 2;
 elseif strncmp(method,'ncchi',5)
     sel = 3;
+elseif strncmp(method,'dp',2)
+    sel = 4;
 else
     sel = 1;
 end
-
+LStop=maxiter;
 p = size(L,1);
 n = size(A,2);
 Ups = UpsF(1:p);
@@ -73,11 +75,29 @@ if lamcut == 0
         LG(i,1) = gcvIter(U1,V1,sm,b,wreg);
     elseif sel==2
         xo = pL*wreg;
-        LG(i,1) = ChiSqx0(A,U1,b,xo,UpsF,M,za);
+        if i>1
+        lamg = LG(i-1,1);
+        else
+        lamg = 25;
+        end
+        LG(i,1) = ChiSqx0(A,U1,b,xo,UpsF,M,za,lamg);
     elseif sel ==3
         xo = pL*wreg;
-        [lg,~] = ChiSqx0_noncentral(A,U1,b,xo,x,UpsF,M,za);
+        if i>1
+        lamg = LG(i-1,1);
+        else
+        lamg = 25;
+        end
+        [lg,~] = ChiSqx0_noncentral(A,U1,b,xo,x,UpsF,M,za,lamg);
         LG(i,1) = lg;
+    elseif sel ==4
+        ta = 1.01; dptol = 1;
+        if i>1
+        lamg = LG(i-1,1);
+        else
+        lamg = 25;
+        end
+        LG(i,1) = DP_GSVD(U1,V1,UpsF,M,b,wreg,n,ta,dptol,lamg);
     end
     lambdaO = LG(i,1);
 else
