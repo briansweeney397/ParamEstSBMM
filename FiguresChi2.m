@@ -35,11 +35,11 @@ b       = Ax + eta; % Blurred signal: b + E
 
 SNR = 20*log10(norm(Ax)/norm(b-Ax));
 
-% Figure 1(a)
-figure(1), 
-  plot(t,x_true,'-.',t,b,'-','LineWidth',2)
-  legend('${\bf{x}}_{true}$','$\tilde{\bf{b}}$','interpreter','latex')
-  set(gcf,'units','centimeters','position',[2 2 3*3.65 3*0.75*3.65])
+% Figure 2(a)
+% figure(1), 
+%   plot(t,x_true,'-.',t,b,'-','LineWidth',2)
+%   legend('${\bf{x}}_{true}$','$\tilde{\bf{b}}$','interpreter','latex')
+%   set(gcf,'units','centimeters','position',[2 2 3*3.65 3*0.75*3.65])
 
 A = A*(1/sigma);
 b = b*(1/sigma);
@@ -228,7 +228,8 @@ figure, semilogx(lambdav,fv,'linewidth',2)
 xlabel('$\lambda$','Interpreter','latex')
 ylabel('$F(\lambda)$','Interpreter','latex')
 hold on, semilogx(lambdav,0*fv,'-k','linewidth',2)
-plot(lambda,f,'*r')
+plot(lambda,f,'.r','MarkerSize',25)
+axis([10^-2 10^6 -140 140])
 xticks([10^(-1) 10^1 10^3 10^5])
 xticklabels({'10^{-1}','10^1','10^3','10^5'})
 set(gcf,'units','centimeters','position',[2 2 3*3.65 3*0.75*3.65])
@@ -296,11 +297,12 @@ for i = 1:length(lambdav)
 fv(i,1) = sum(lambdavv^2*zt1)-mt;
 end
 figure, semilogx(lambdav,fv,'linewidth',2)
-hold on, plot(lambdav(68),fv(68),'*')
+hold on, semilogx(lambdav,0*fv,'-k','linewidth',2)
+plot(lambdav(68),fv(68),'.r','MarkerSize',25)
 xlabel('$\lambda$','Interpreter','latex')
 ylabel('$F_C(\lambda)$','Interpreter','latex')
 set(gcf,'units','centimeters','position',[2 2 3*3.65 3*0.75*3.65])
-axis([10^-2 10^6 -140 -40])
+axis([10^-2 10^6 -140 140])
 xticks([10^(-1) 10^1 10^3 10^5])
 xticklabels({'10^{-1}','10^1','10^3','10^5'})
 end
